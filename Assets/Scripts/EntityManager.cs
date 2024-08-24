@@ -22,6 +22,8 @@ public class EntityManager : MonoBehaviour
 	[SerializeField] TMP_Text skillEventTMP; //스킬 사용시 뜨는 텍스트
 	[SerializeField] GameObject eventPanel; // 스킬 사용시 활성화 비활성화 패널
 
+	[SerializeField] GameObject ThreeSkillPanel; // 3스킬 사용시 활성화 비활성화 패널
+
 	const int MAX_ENTITY_COUNT = 6;
 	public bool IsFullMyEntities => myEntities.Count >= MAX_ENTITY_COUNT && !ExistMyEmptyEntity;
 	bool IsFullOtherEntities => otherEntities.Count >= MAX_ENTITY_COUNT;
@@ -34,8 +36,10 @@ public class EntityManager : MonoBehaviour
 	float TwoSkillsPercent = 0.2f;
 	float ThreeSkillsPercent = 0.1f;
 
-	Entity selectEntity;
-	Entity targetPickEntity;
+	public bool threeSkillBool = false;
+
+	public Entity selectEntity;
+	public Entity targetPickEntity;
 	WaitForSeconds delay1 = new WaitForSeconds(1);
 	WaitForSeconds delay2 = new WaitForSeconds(2);
 
@@ -97,10 +101,12 @@ public class EntityManager : MonoBehaviour
 				eventPanel.SetActive(false);
 			}
 			//세 번째 스킬 사용
-			else if (targetEntities[i].liveCount > 1 && targetEntities[i].skill == 3 && GetPercentChance(ThreeSkillsPercent))
+			else if (targetEntities[i].liveCount > -1 && targetEntities[i].skill == 3 && GetPercentChance(ThreeSkillsPercent))
 			{
 				skillEventTMP.text = "3번째 스킬 사용";
+				eventPanel.SetActive(true);
 				targetEntities[i].skillCount++;
+				StartCoroutine(ThreeSkill(myTurn, targetEntities[i]));
 				//스킬 사용 후
 				yield return delay2;
 				eventPanel.SetActive(false);
@@ -129,8 +135,54 @@ public class EntityManager : MonoBehaviour
 		SpawnHeal(randomHeal, bossEntity.transform);
 
 	}
-	void ThreeSkill()
+	IEnumerator ThreeSkill(bool myTurn, Entity myEntitie)
 	{
+		// List<Entity> enemyEntities = myTurn ? otherEntities : myEntitie;
+		if (myTurn)
+		{
+			threeSkillBool = true;
+			ThreeSkillPanel.SetActive(true);
+			while (threeSkillBool)
+			{
+				yield return delay1;
+			}
+		}
+		else
+		{
+			var defenders = new List<Entity>(myEntities);
+			int rand = Random.Range(0, defenders.Count);
+			targetPickEntity = defenders[rand];
+		}
+		myEntitie.isDie = true;
+		targetPickEntity.isDie = true;
+		AttackCallback(myEntitie, targetPickEntity);
+		targetPickEntity = null;
+
+	}
+
+	public void ThreeSkillSelect(Entity entity)
+	{
+		bool existTarget = false;
+		foreach (var hit in Physics2D.RaycastAll(Utils.MousePos, Vector3.forward))
+		{
+			Entity entityEnemy = hit.collider?.GetComponent<Entity>();
+			if (entityEnemy != null && !entityEnemy.isMine && entityEnemy != otherBossEntity)
+			{
+				targetPickEntity = entityEnemy;
+				existTarget = true;
+				break;
+			}
+		}
+		if (!existTarget)
+			targetPickEntity = null;
+
+	}
+	public void ThreeSkillSelectDone()
+	{
+		ThreeSkillPanel.SetActive(false);
+		threeSkillBool = false;
+
+
 
 	}
 	/// <summary>
@@ -255,6 +307,12 @@ public class EntityManager : MonoBehaviour
 		entity.Setup(item);
 		EntityAlignment(isMine);
 
+
+		List<Entity> entityw = new()
+		{
+			entity
+		};
+		StartCoroutine(SkillsCheck(isMine, entityw));
 		return true;
 	}
 

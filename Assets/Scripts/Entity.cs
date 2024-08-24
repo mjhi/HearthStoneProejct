@@ -66,11 +66,21 @@ public class Entity : MonoBehaviour
         if (isMine)
             EntityManager.Inst.EntityMouseDown(this);
     }
-
+    void OnMouseOver()
+    {
+        if (EntityManager.Inst.threeSkillBool)
+        {
+            EntityManager.Inst.ThreeSkillSelect(this);
+        }
+    }
     void OnMouseUp()
     {
         if (isMine)
             EntityManager.Inst.EntityMouseUp();
+        else if (EntityManager.Inst.threeSkillBool)
+        {
+            EntityManager.Inst.ThreeSkillSelectDone();
+        }
     }
 
     void OnMouseDrag()
