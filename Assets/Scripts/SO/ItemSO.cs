@@ -10,6 +10,7 @@ public class Item
     public int health;
     public Sprite sprite;
     public float percent;
+    public int skills;
 }
 
 [CreateAssetMenu(fileName = "ItemSO", menuName = "Scriptable Object/ItemSO")]
