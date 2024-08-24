@@ -24,6 +24,8 @@ public class Entity : MonoBehaviour
     public int liveCount;
     public int skill;
 
+    public int skillCount = 0;
+
 
     void Start()
     {
@@ -90,6 +92,13 @@ public class Entity : MonoBehaviour
         return false;
     }
 
+
+    public bool Healing(int Heal)
+    {
+        health += Heal;
+        healthTMP.text = health.ToString();
+        return false;
+    }
     public void MoveTransform(Vector3 pos, bool useDotween, float dotweenTime = 0)
     {
         if (useDotween)

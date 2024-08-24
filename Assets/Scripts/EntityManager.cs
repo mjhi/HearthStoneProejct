@@ -12,6 +12,7 @@ public class EntityManager : MonoBehaviour
 
 	[SerializeField] GameObject entityPrefab;
 	[SerializeField] GameObject damagePrefab;
+	[SerializeField] GameObject healPrefab;
 	[SerializeField] List<Entity> myEntities;
 	[SerializeField] List<Entity> otherEntities;
 	[SerializeField] GameObject TargetPicker;
@@ -69,8 +70,9 @@ public class EntityManager : MonoBehaviour
 		for (int i = 0; i < targetEntities.Count; i++)
 		{
 			//첫 번째 스킬 사용
-			if (targetEntities[i].liveCount > 1 && targetEntities[i].skill == 1 && GetPercentChance(OneSkillsPercent))
+			if (targetEntities[i].skill == 1 && GetPercentChance(OneSkillsPercent))
 			{
+				targetEntities[i].skillCount++;
 				skillEventTMP.text = "1번째 스킬 사용";
 				eventPanel.SetActive(true);
 				var enemyEntities = myTurn ? otherEntities : myEntities; // 누구 턴인지 체크하기
@@ -81,9 +83,15 @@ public class EntityManager : MonoBehaviour
 				eventPanel.SetActive(false);
 			}
 			//두 번째 스킬 사용
-			else if (targetEntities[i].liveCount > 1 && targetEntities[i].skill == 2 && GetPercentChance(TwoSkillsPercent))
+			else if (targetEntities[i].skill == 2 && GetPercentChance(TwoSkillsPercent))
 			{
 				skillEventTMP.text = "2번째 스킬 사용";
+				targetEntities[i].skillCount++;
+				if (targetEntities[i].skillCount <= 2)
+				{
+					eventPanel.SetActive(true);
+					TwoSkill(myTurn);
+				}
 				//스킬 사용 후
 				yield return delay2;
 				eventPanel.SetActive(false);
@@ -92,6 +100,7 @@ public class EntityManager : MonoBehaviour
 			else if (targetEntities[i].liveCount > 1 && targetEntities[i].skill == 3 && GetPercentChance(ThreeSkillsPercent))
 			{
 				skillEventTMP.text = "3번째 스킬 사용";
+				targetEntities[i].skillCount++;
 				//스킬 사용 후
 				yield return delay2;
 				eventPanel.SetActive(false);
@@ -101,6 +110,7 @@ public class EntityManager : MonoBehaviour
 	}
 	void OneSkill(List<Entity> enemyEntities)
 	{
+
 		for (int i = 0; i < enemyEntities.Count; i++)
 		{
 			int randomDemage = Random.Range(1, 4);
@@ -110,8 +120,13 @@ public class EntityManager : MonoBehaviour
 		}
 		AttackCallback(enemyEntities.ToArray());
 	}
-	void TwoSkill()
+	void TwoSkill(bool myTurn)
 	{
+		Entity bossEntity = myTurn ? myBossEntity : otherBossEntity;
+
+		int randomHeal = Random.Range(1, 4);
+		bossEntity.Healing(randomHeal);
+		SpawnHeal(randomHeal, bossEntity.transform);
 
 	}
 	void ThreeSkill()
@@ -364,6 +379,16 @@ public class EntityManager : MonoBehaviour
 		var damageComponent = Instantiate(damagePrefab).GetComponent<Damage>();
 		damageComponent.SetupTransform(tr);
 		damageComponent.Damaged(damage);
+	}
+
+	void SpawnHeal(int Heal, Transform tr)
+	{
+		if (Heal <= 0)
+			return;
+
+		var damageComponent = Instantiate(healPrefab).GetComponent<Heal>();
+		damageComponent.SetupTransform(tr);
+		damageComponent.Damaged(Heal);
 	}
 
 	public void AttackableReset(bool isMine)

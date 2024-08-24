@@ -1005,6 +1005,7 @@ MonoBehaviour:
   originPos: {x: 0, y: 0, z: 0}
   liveCount: 0
   skill: 0
+  skillCount: 0
 --- !u!1 &408309318
 GameObject:
   m_ObjectHideFlags: 0
@@ -1389,6 +1390,7 @@ MonoBehaviour:
   originPos: {x: 0.02, y: 11.77, z: 0}
   liveCount: 0
   skill: 0
+  skillCount: 0
 --- !u!61 &699030981
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1771,6 +1773,7 @@ MonoBehaviour:
   originPos: {x: -0.03, y: -12.54, z: 0}
   liveCount: 0
   skill: 0
+  skillCount: 0
 --- !u!1 &846773429
 GameObject:
   m_ObjectHideFlags: 0
@@ -2126,6 +2129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityPrefab: {fileID: 402455456826641734, guid: 1a195d205b53678468dd8f415fdc3e95, type: 3}
   damagePrefab: {fileID: 8958434049351983137, guid: 85de558dbf4dfa34a9d2a7f0d218cefb, type: 3}
+  healPrefab: {fileID: 8958434049351983137, guid: 23d1d35264bac56428aaf3ca84d15a74, type: 3}
   myEntities: []
   otherEntities: []
   TargetPicker: {fileID: 748108161}
