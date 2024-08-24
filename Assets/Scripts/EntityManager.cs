@@ -80,7 +80,7 @@ public class EntityManager : MonoBehaviour
 			if (targetEntities[i].skill == 1 && GetPercentChance(OneSkillsPercent))
 			{
 				targetEntities[i].skillCount++;
-				skillEventTMP.text = "1번째 스킬 사용";
+				skillEventTMP.text = "리코 스킬 사용";
 				eventPanel.SetActive(true);
 				var enemyEntities = myTurn ? otherEntities : myEntities; // 누구 턴인지 체크하기
 				OneSkill(enemyEntities);
@@ -92,7 +92,7 @@ public class EntityManager : MonoBehaviour
 			//두 번째 스킬 사용
 			else if (targetEntities[i].skill == 2 && GetPercentChance(TwoSkillsPercent))
 			{
-				skillEventTMP.text = "2번째 스킬 사용";
+				skillEventTMP.text = "라니엘 스킬 사용";
 				targetEntities[i].skillCount++;
 				if (targetEntities[i].skillCount <= 2)
 				{
@@ -106,7 +106,7 @@ public class EntityManager : MonoBehaviour
 			//세 번째 스킬 사용
 			else if (targetEntities[i].liveCount > 1 && targetEntities[i].skill == 3 && GetPercentChance(ThreeSkillsPercent))
 			{
-				skillEventTMP.text = "3번째 스킬 사용";
+				skillEventTMP.text = "누모 스킬 사용";
 				eventPanel.SetActive(true);
 				targetEntities[i].skillCount++;
 				StartCoroutine(ThreeSkill(myTurn, targetEntities[i]));
