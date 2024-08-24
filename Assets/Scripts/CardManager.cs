@@ -21,7 +21,7 @@ public class CardManager : MonoBehaviour
     [SerializeField] Transform otherCardLeft;
     [SerializeField] Transform otherCardRight;
     [SerializeField] ECardState eCardState;
-    
+
     List<Item> itemBuffer;
     Card selectCard;
     bool isMyCardDrag;
@@ -59,27 +59,27 @@ public class CardManager : MonoBehaviour
         }
     }
 
-	void Start()
-	{
+    void Start()
+    {
         SetupItemBuffer();
         TurnManager.OnAddCard += AddCard;
         TurnManager.OnTurnStarted += OnTurnStarted;
     }
 
-	void OnDestroy()
-	{
+    void OnDestroy()
+    {
         TurnManager.OnAddCard -= AddCard;
         TurnManager.OnTurnStarted -= OnTurnStarted;
     }
 
-    void OnTurnStarted(bool myTurn) 
+    void OnTurnStarted(bool myTurn)
     {
         if (myTurn)
             myPutCount = 0;
     }
 
-	void Update()
-	{
+    void Update()
+    {
         if (isMyCardDrag)
             CardDrag();
 
@@ -87,14 +87,14 @@ public class CardManager : MonoBehaviour
         SetECardState();
     }
 
-	void AddCard(bool isMine)
+    void AddCard(bool isMine)
     {
         var cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Utils.QI);
         var card = cardObject.GetComponent<Card>();
         card.Setup(PopItem(), isMine);
         (isMine ? myCards : otherCards).Add(card);
 
-        SetOriginOrder(isMine); 
+        SetOriginOrder(isMine);
         CardAlignment(isMine);
     }
 
@@ -108,7 +108,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    void CardAlignment(bool isMine) 
+    void CardAlignment(bool isMine)
     {
         List<PRS> originCardPRSs = new List<PRS>();
         if (isMine)
@@ -159,7 +159,7 @@ public class CardManager : MonoBehaviour
         return results;
     }
 
-    public bool TryPutCard(bool isMine) 
+    public bool TryPutCard(bool isMine)
     {
         if (isMine && myPutCount >= 1)
             return false;
@@ -184,7 +184,7 @@ public class CardManager : MonoBehaviour
             CardAlignment(isMine);
             return true;
         }
-        else 
+        else
         {
             targetCards.ForEach(x => x.GetComponent<Order>().SetMostFrontOrder(false));
             CardAlignment(isMine);
@@ -202,15 +202,21 @@ public class CardManager : MonoBehaviour
             return;
 
         selectCard = card;
+        if (card.item.skills > 0)
+        {
+            EntityManager.Inst.SkillInfoTMP.text = SkillsInfo.Inst.skillsInfo[card.item.skills].Replace("\\n", "\n"); // 이걸넣으면 \n이 줄바꿈이 된다.;
+            EntityManager.Inst.SkillInfoPanel.SetActive(true);
+        }
         EnlargeCard(true, card);
     }
 
     public void CardMouseExit(Card card)
     {
+        EntityManager.Inst.SkillInfoPanel.SetActive(false);
         EnlargeCard(false, card);
     }
 
-    public void CardMouseDown() 
+    public void CardMouseDown()
     {
         if (eCardState != ECardState.CanMouseDrag)
             return;
