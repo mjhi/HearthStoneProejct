@@ -24,6 +24,9 @@ public class EntityManager : MonoBehaviour
 
 	[SerializeField] GameObject ThreeSkillPanel; // 3스킬 사용시 활성화 비활성화 패널
 
+	[SerializeField] public GameObject SkillInfoPanel; // 스킬 인포 패널
+	[SerializeField] public TMP_Text SkillInfoTMP; // 스킬 인포 텍스트
+
 	const int MAX_ENTITY_COUNT = 6;
 	public bool IsFullMyEntities => myEntities.Count >= MAX_ENTITY_COUNT && !ExistMyEmptyEntity;
 	bool IsFullOtherEntities => otherEntities.Count >= MAX_ENTITY_COUNT;

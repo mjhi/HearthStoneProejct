@@ -72,6 +72,16 @@ public class Entity : MonoBehaviour
         {
             EntityManager.Inst.ThreeSkillSelect(this);
         }
+        if (skill > 0)
+        {
+            EntityManager.Inst.SkillInfoTMP.text = SkillsInfo.Inst.skillsInfo[skill].Replace("\\n", "\n"); // 이걸넣으면 \n이 줄바꿈이 된다.;
+            EntityManager.Inst.SkillInfoPanel.SetActive(true);
+
+        }
+    }
+    void OnMouseExit()
+    {
+        EntityManager.Inst.SkillInfoPanel.SetActive(false);
     }
     void OnMouseUp()
     {
