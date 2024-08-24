@@ -19,10 +19,10 @@ public class EntityManager : MonoBehaviour
 	[SerializeField] Entity myEmptyEntity;
 	[SerializeField] Entity myBossEntity;
 	[SerializeField] Entity otherBossEntity;
-	[SerializeField] TMP_Text skillEventTMP; //½ºÅ³ »ç¿ë½Ã ¶ß´Â ÅØ½ºÆ®
-	[SerializeField] GameObject eventPanel; // ½ºÅ³ »ç¿ë½Ã È°¼ºÈ­ ºñÈ°¼ºÈ­ ÆĞ³Î
+	[SerializeField] TMP_Text skillEventTMP; //ìŠ¤í‚¬ ì‚¬ìš©ì‹œ ëœ¨ëŠ” í…ìŠ¤íŠ¸
+	[SerializeField] GameObject eventPanel; // ìŠ¤í‚¬ ì‚¬ìš©ì‹œ í™œì„±í™” ë¹„í™œì„±í™” íŒ¨ë„
 
-	[SerializeField] GameObject ThreeSkillPanel; // 3½ºÅ³ »ç¿ë½Ã È°¼ºÈ­ ºñÈ°¼ºÈ­ ÆĞ³Î
+	[SerializeField] GameObject ThreeSkillPanel; // 3ìŠ¤í‚¬ ì‚¬ìš©ì‹œ í™œì„±í™” ë¹„í™œì„±í™” íŒ¨ë„
 
 	const int MAX_ENTITY_COUNT = 6;
 	public bool IsFullMyEntities => myEntities.Count >= MAX_ENTITY_COUNT && !ExistMyEmptyEntity;
@@ -57,7 +57,7 @@ public class EntityManager : MonoBehaviour
 
 	void OnTurnStarted(bool myTurn)
 	{
-		var targetEntities = myTurn ? myEntities : otherEntities; // ´©±¸ ÅÏÀÎÁö Ã¼Å©ÇÏ±â
+		var targetEntities = myTurn ? myEntities : otherEntities; // ëˆ„êµ¬ í„´ì¸ì§€ ì²´í¬í•˜ê¸°
 		StartCoroutine(SkillsCheck(myTurn, targetEntities));
 		AttackableReset(myTurn);
 
@@ -65,49 +65,49 @@ public class EntityManager : MonoBehaviour
 			StartCoroutine(AICo());
 	}
 	/// <summary>
-	/// ½ºÅ³»ç¿ë ¿©ºÎ Ã¼Å©ÇÏ´Â ÇÔ¼ö
+	/// ìŠ¤í‚¬ì‚¬ìš© ì—¬ë¶€ ì²´í¬í•˜ëŠ” í•¨ìˆ˜
 	/// </summary>
-	/// <param name="myTurn">ÀÚ½ÅÀÇ ÅÏÀÎÁö ¾Æ´ÑÁö</param>
-	/// /// <param name="targetEntities">Å¸°Ù ¿£Æ¼Æ¼µé.</param>
+	/// <param name="myTurn">ìì‹ ì˜ í„´ì¸ì§€ ì•„ë‹Œì§€</param>
+	/// /// <param name="targetEntities">íƒ€ê²Ÿ ì—”í‹°í‹°ë“¤.</param>
 	IEnumerator SkillsCheck(bool myTurn, List<Entity> targetEntities)
 	{
 		for (int i = 0; i < targetEntities.Count; i++)
 		{
-			//Ã¹ ¹øÂ° ½ºÅ³ »ç¿ë
+			//ì²« ë²ˆì§¸ ìŠ¤í‚¬ ì‚¬ìš©
 			if (targetEntities[i].skill == 1 && GetPercentChance(OneSkillsPercent))
 			{
 				targetEntities[i].skillCount++;
-				skillEventTMP.text = "1¹øÂ° ½ºÅ³ »ç¿ë";
+				skillEventTMP.text = "1ë²ˆì§¸ ìŠ¤í‚¬ ì‚¬ìš©";
 				eventPanel.SetActive(true);
-				var enemyEntities = myTurn ? otherEntities : myEntities; // ´©±¸ ÅÏÀÎÁö Ã¼Å©ÇÏ±â
+				var enemyEntities = myTurn ? otherEntities : myEntities; // ëˆ„êµ¬ í„´ì¸ì§€ ì²´í¬í•˜ê¸°
 				OneSkill(enemyEntities);
 
-				//½ºÅ³ »ç¿ë ÈÄ
+				//ìŠ¤í‚¬ ì‚¬ìš© í›„
 				yield return delay2;
 				eventPanel.SetActive(false);
 			}
-			//µÎ ¹øÂ° ½ºÅ³ »ç¿ë
+			//ë‘ ë²ˆì§¸ ìŠ¤í‚¬ ì‚¬ìš©
 			else if (targetEntities[i].skill == 2 && GetPercentChance(TwoSkillsPercent))
 			{
-				skillEventTMP.text = "2¹øÂ° ½ºÅ³ »ç¿ë";
+				skillEventTMP.text = "2ë²ˆì§¸ ìŠ¤í‚¬ ì‚¬ìš©";
 				targetEntities[i].skillCount++;
 				if (targetEntities[i].skillCount <= 2)
 				{
 					eventPanel.SetActive(true);
 					TwoSkill(myTurn);
 				}
-				//½ºÅ³ »ç¿ë ÈÄ
+				//ìŠ¤í‚¬ ì‚¬ìš© í›„
 				yield return delay2;
 				eventPanel.SetActive(false);
 			}
-			//¼¼ ¹øÂ° ½ºÅ³ »ç¿ë
-			else if (targetEntities[i].liveCount > -1 && targetEntities[i].skill == 3 && GetPercentChance(ThreeSkillsPercent))
+			//ì„¸ ë²ˆì§¸ ìŠ¤í‚¬ ì‚¬ìš©
+			else if (targetEntities[i].liveCount > 1 && targetEntities[i].skill == 3 && GetPercentChance(ThreeSkillsPercent))
 			{
-				skillEventTMP.text = "3¹øÂ° ½ºÅ³ »ç¿ë";
+				skillEventTMP.text = "3ë²ˆì§¸ ìŠ¤í‚¬ ì‚¬ìš©";
 				eventPanel.SetActive(true);
 				targetEntities[i].skillCount++;
 				StartCoroutine(ThreeSkill(myTurn, targetEntities[i]));
-				//½ºÅ³ »ç¿ë ÈÄ
+				//ìŠ¤í‚¬ ì‚¬ìš© í›„
 				yield return delay2;
 				eventPanel.SetActive(false);
 			}
@@ -186,19 +186,19 @@ public class EntityManager : MonoBehaviour
 
 	}
 	/// <summary>
-	/// ½ºÅ³ È®·ü °è»ê ÇÔ¼ö
+	/// ìŠ¤í‚¬ í™•ë¥  ê³„ì‚° í•¨ìˆ˜
 	/// </summary>
 	/// <param name="percent"></param>
 	/// <returns></returns>
 	public bool GetPercentChance(float percent)
 	{
-		// UnityEngine.RandomÀ» »ç¿ëÇÏ¿© ·£´ı °ªÀ» »ı¼ºÇÕ´Ï´Ù.
-		// Random.value´Â 0.0 ÀÌ»ó 1.0 ¹Ì¸¸ÀÇ ³­¼ö¸¦ »ı¼ºÇÕ´Ï´Ù.
+		// UnityEngine.Randomì„ ì‚¬ìš©í•˜ì—¬ ëœë¤ ê°’ì„ ìƒì„±í•©ë‹ˆë‹¤.
+		// Random.valueëŠ” 0.0 ì´ìƒ 1.0 ë¯¸ë§Œì˜ ë‚œìˆ˜ë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
 		float randomValue = UnityEngine.Random.value;
 
-		// 20% È®·ü·Î true¸¦ ¸®ÅÏÇÒ Á¶°ÇÀ» ¼³Á¤ÇÕ´Ï´Ù.
+		// 20% í™•ë¥ ë¡œ trueë¥¼ ë¦¬í„´í•  ì¡°ê±´ì„ ì„¤ì •í•©ë‹ˆë‹¤.
 		bool result = randomValue <= percent;
-		string str = "ÆÛ¼¾Æ® ·ç·Â : " + randomValue.ToString();
+		string str = "í¼ì„¼íŠ¸ ë£¨ë ¥ : " + randomValue.ToString();
 		Debug.Log(str);
 		return result;
 	}
@@ -212,7 +212,7 @@ public class EntityManager : MonoBehaviour
 		CardManager.Inst.TryPutCard(false);
 		yield return delay1;
 
-		// attackableÀÌ trueÀÎ ¸ğµç otherEntites¸¦ °¡Á®¿Í ¼ø¼­¸¦ ¼¯´Â´Ù
+		// attackableì´ trueì¸ ëª¨ë“  otherEntitesë¥¼ ê°€ì ¸ì™€ ìˆœì„œë¥¼ ì„ëŠ”ë‹¤
 		var attackers = new List<Entity>(otherEntities.FindAll(x => x.attackable == true));
 		for (int i = 0; i < attackers.Count; i++)
 		{
@@ -222,7 +222,7 @@ public class EntityManager : MonoBehaviour
 			attackers[rand] = temp;
 		}
 
-		// º¸½º¸¦ Æ÷ÇÔÇÑ myEntities¸¦ ·£´ıÇÏ°Ô ½Ã°£Â÷ °ø°İÇÑ´Ù
+		// ë³´ìŠ¤ë¥¼ í¬í•¨í•œ myEntitiesë¥¼ ëœë¤í•˜ê²Œ ì‹œê°„ì°¨ ê³µê²©í•œë‹¤
 		foreach (var attacker in attackers)
 		{
 			var defenders = new List<Entity>(myEntities);
@@ -329,7 +329,7 @@ public class EntityManager : MonoBehaviour
 		if (!CanMouseInput)
 			return;
 
-		// selectEntity, targetPickEntity µÑ´Ù Á¸ÀçÇÏ¸é °ø°İÇÑ´Ù. ¹Ù·Î null, null·Î ¸¸µç´Ù.
+		// selectEntity, targetPickEntity ë‘˜ë‹¤ ì¡´ì¬í•˜ë©´ ê³µê²©í•œë‹¤. ë°”ë¡œ null, nullë¡œ ë§Œë“ ë‹¤.
 		if (selectEntity && targetPickEntity && selectEntity.attackable)
 			Attack(selectEntity, targetPickEntity);
 
@@ -342,7 +342,7 @@ public class EntityManager : MonoBehaviour
 		if (!CanMouseInput || selectEntity == null)
 			return;
 
-		// other Å¸°Ù¿£Æ¼Æ¼ Ã£±â
+		// other íƒ€ê²Ÿì—”í‹°í‹° ì°¾ê¸°
 		bool existTarget = false;
 		foreach (var hit in Physics2D.RaycastAll(Utils.MousePos, Vector3.forward))
 		{
@@ -360,7 +360,7 @@ public class EntityManager : MonoBehaviour
 
 	void Attack(Entity attacker, Entity defender)
 	{
-		// _attacker°¡ _defenderÀÇ À§Ä¡·Î ÀÌµ¿ÇÏ´Ù ¿ø·¡ À§Ä¡·Î ¿Â´Ù, ÀÌ¶§ order°¡ ³ô´Ù
+		// _attackerê°€ _defenderì˜ ìœ„ì¹˜ë¡œ ì´ë™í•˜ë‹¤ ì›ë˜ ìœ„ì¹˜ë¡œ ì˜¨ë‹¤, ì´ë•Œ orderê°€ ë†’ë‹¤
 		attacker.attackable = false;
 		attacker.GetComponent<Order>().SetMostFrontOrder(true);
 
@@ -379,7 +379,7 @@ public class EntityManager : MonoBehaviour
 
 	void AttackCallback(params Entity[] entities)
 	{
-		// Á×À» »ç¶÷ °ñ¶ó¼­ Á×À½ Ã³¸®
+		// ì£½ì„ ì‚¬ëŒ ê³¨ë¼ì„œ ì£½ìŒ ì²˜ë¦¬
 		entities[0].GetComponent<Order>().SetMostFrontOrder(false);
 
 		foreach (var entity in entities)
