@@ -86,7 +86,7 @@ public class EntityManager : MonoBehaviour
 				OneSkill(enemyEntities);
 
 				//스킬 사용 후
-				yield return delay2;
+				yield return new WaitForSeconds(3);
 				eventPanel.SetActive(false);
 			}
 			//두 번째 스킬 사용
@@ -100,7 +100,7 @@ public class EntityManager : MonoBehaviour
 					TwoSkill(myTurn);
 				}
 				//스킬 사용 후
-				yield return delay2;
+				yield return new WaitForSeconds(3);
 				eventPanel.SetActive(false);
 			}
 			//세 번째 스킬 사용
@@ -111,7 +111,7 @@ public class EntityManager : MonoBehaviour
 				targetEntities[i].skillCount++;
 				StartCoroutine(ThreeSkill(myTurn, targetEntities[i]));
 				//스킬 사용 후
-				yield return delay2;
+				yield return new WaitForSeconds(3);
 				eventPanel.SetActive(false);
 			}
 
