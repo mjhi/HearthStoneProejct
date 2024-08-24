@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using DG.Tweening;
+using System.Linq;
 
 public class EntityManager : MonoBehaviour
 {
@@ -16,6 +18,8 @@ public class EntityManager : MonoBehaviour
 	[SerializeField] Entity myEmptyEntity;
 	[SerializeField] Entity myBossEntity;
 	[SerializeField] Entity otherBossEntity;
+	[SerializeField] TMP_Text skillEventTMP; //스킬 사용시 뜨는 텍스트
+	[SerializeField] GameObject eventPanel; // 스킬 사용시 활성화 비활성화 패널
 
 	const int MAX_ENTITY_COUNT = 6;
 	public bool IsFullMyEntities => myEntities.Count >= MAX_ENTITY_COUNT && !ExistMyEmptyEntity;
@@ -24,6 +28,10 @@ public class EntityManager : MonoBehaviour
 	bool ExistMyEmptyEntity => myEntities.Exists(x => x == myEmptyEntity);
 	int MyEmptyEntityIndex => myEntities.FindIndex(x => x == myEmptyEntity);
 	bool CanMouseInput => TurnManager.Inst.myTurn && !TurnManager.Inst.isLoading;
+
+	float OneSkillsPercent = 0.3f;
+	float TwoSkillsPercent = 0.2f;
+	float ThreeSkillsPercent = 0.1f;
 
 	Entity selectEntity;
 	Entity targetPickEntity;
@@ -44,12 +52,89 @@ public class EntityManager : MonoBehaviour
 
 	void OnTurnStarted(bool myTurn)
 	{
+		var targetEntities = myTurn ? myEntities : otherEntities; // 누구 턴인지 체크하기
+		StartCoroutine(SkillsCheck(myTurn, targetEntities));
 		AttackableReset(myTurn);
 
 		if (!myTurn)
 			StartCoroutine(AICo());
 	}
+	/// <summary>
+	/// 스킬사용 여부 체크하는 함수
+	/// </summary>
+	/// <param name="myTurn">자신의 턴인지 아닌지</param>
+	/// /// <param name="targetEntities">타겟 엔티티들.</param>
+	IEnumerator SkillsCheck(bool myTurn, List<Entity> targetEntities)
+	{
+		for (int i = 0; i < targetEntities.Count; i++)
+		{
+			//첫 번째 스킬 사용
+			if (targetEntities[i].liveCount > 1 && targetEntities[i].skill == 1 && GetPercentChance(OneSkillsPercent))
+			{
+				skillEventTMP.text = "1번째 스킬 사용";
+				eventPanel.SetActive(true);
+				var enemyEntities = myTurn ? otherEntities : myEntities; // 누구 턴인지 체크하기
+				OneSkill(enemyEntities);
 
+				//스킬 사용 후
+				yield return delay2;
+				eventPanel.SetActive(false);
+			}
+			//두 번째 스킬 사용
+			else if (targetEntities[i].liveCount > 1 && targetEntities[i].skill == 2 && GetPercentChance(TwoSkillsPercent))
+			{
+				skillEventTMP.text = "2번째 스킬 사용";
+				//스킬 사용 후
+				yield return delay2;
+				eventPanel.SetActive(false);
+			}
+			//세 번째 스킬 사용
+			else if (targetEntities[i].liveCount > 1 && targetEntities[i].skill == 3 && GetPercentChance(ThreeSkillsPercent))
+			{
+				skillEventTMP.text = "3번째 스킬 사용";
+				//스킬 사용 후
+				yield return delay2;
+				eventPanel.SetActive(false);
+			}
+
+		}
+	}
+	void OneSkill(List<Entity> enemyEntities)
+	{
+		for (int i = 0; i < enemyEntities.Count; i++)
+		{
+			int randomDemage = Random.Range(1, 4);
+			enemyEntities[i].Damaged(randomDemage);
+			SpawnDamage(randomDemage, enemyEntities[i].transform);
+
+		}
+		AttackCallback(enemyEntities.ToArray());
+	}
+	void TwoSkill()
+	{
+
+	}
+	void ThreeSkill()
+	{
+
+	}
+	/// <summary>
+	/// 스킬 확률 계산 함수
+	/// </summary>
+	/// <param name="percent"></param>
+	/// <returns></returns>
+	public bool GetPercentChance(float percent)
+	{
+		// UnityEngine.Random을 사용하여 랜덤 값을 생성합니다.
+		// Random.value는 0.0 이상 1.0 미만의 난수를 생성합니다.
+		float randomValue = UnityEngine.Random.value;
+
+		// 20% 확률로 true를 리턴할 조건을 설정합니다.
+		bool result = randomValue <= percent;
+		string str = "퍼센트 루력 : " + randomValue.ToString();
+		Debug.Log(str);
+		return result;
+	}
 	void Update()
 	{
 		ShowTargetPicker(ExistTargetPickEntity);
@@ -158,7 +243,7 @@ public class EntityManager : MonoBehaviour
 		return true;
 	}
 
-	public void EntityMouseDown(Entity entity) 
+	public void EntityMouseDown(Entity entity)
 	{
 		if (!CanMouseInput)
 			return;
@@ -166,7 +251,7 @@ public class EntityManager : MonoBehaviour
 		selectEntity = entity;
 	}
 
-	public void EntityMouseUp() 
+	public void EntityMouseUp()
 	{
 		if (!CanMouseInput)
 			return;
@@ -179,7 +264,7 @@ public class EntityManager : MonoBehaviour
 		targetPickEntity = null;
 	}
 
-	public void EntityMouseDrag() 
+	public void EntityMouseDrag()
 	{
 		if (!CanMouseInput || selectEntity == null)
 			return;

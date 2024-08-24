@@ -21,7 +21,8 @@ public class Entity : MonoBehaviour
     public bool isBossOrEmpty;
     public bool attackable;
     public Vector3 originPos;
-    int liveCount;
+    public int liveCount;
+    public int skill;
 
 
     void Start()
@@ -34,7 +35,7 @@ public class Entity : MonoBehaviour
         TurnManager.OnTurnStarted -= OnTurnStarted;
     }
 
-    void OnTurnStarted(bool myTurn)
+    void OnTurnStarted(bool myTurn)//턴 시작 시.
     {
         if (isBossOrEmpty)
             return;
@@ -55,6 +56,7 @@ public class Entity : MonoBehaviour
         nameTMP.text = this.item.name;
         attackTMP.text = attack.ToString();
         healthTMP.text = health.ToString();
+        skill = item.skills;
     }
 
     void OnMouseDown()
